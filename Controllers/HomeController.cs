@@ -1,4 +1,5 @@
 ﻿using AspNetCoreIdentity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace AspNetCoreIdentity.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -18,6 +21,24 @@ namespace AspNetCoreIdentity.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [Authorize(Roles ="Admin, Gestor")]
+        public IActionResult Secret()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "PodeExcluir")]
+        public IActionResult SecretClaim()
+        {
+            return View("Secret");
+        }
+
+        [Authorize(Policy = "PodeLer")]
+        public IActionResult SecretClaimGravar()
+        {
+            return View("Secret");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

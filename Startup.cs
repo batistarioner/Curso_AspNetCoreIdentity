@@ -1,4 +1,6 @@
 ﻿using AspNetCoreIdentity.Areas.Identity.Data;
+using AspNetCoreIdentity.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,10 +42,21 @@ namespace AspNetCoreIdentity
                     Configuration.GetConnectionString("AspNetCoreIdentityContextConnection")));
 
             services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<AspNetCoreIdentityContext>();
 
-             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAuthorization(opcoes =>
+            {
+                opcoes.AddPolicy("PodeExcluir", policy => policy.RequireClaim("PodeExcluir"));
+
+                opcoes.AddPolicy("PodeLer", policy => policy.Requirements.Add(new PermissaoNecessaria("PodeLer")));
+                opcoes.AddPolicy("PodeEscrever", policy => policy.Requirements.Add(new PermissaoNecessaria("PodeEscrever")));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, PermissaoNecessariaHandler>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
