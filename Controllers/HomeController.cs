@@ -1,4 +1,5 @@
-﻿using AspNetCoreIdentity.Models;
+﻿using AspNetCoreIdentity.Extensions;
+using AspNetCoreIdentity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -37,6 +38,12 @@ namespace AspNetCoreIdentity.Controllers
 
         [Authorize(Policy = "PodeLer")]
         public IActionResult SecretClaimGravar()
+        {
+            return View("Secret");
+        }
+
+        [ClaimsAuthorize("Produtos", "Ler")]
+        public IActionResult ClamsCustom()
         {
             return View("Secret");
         }
